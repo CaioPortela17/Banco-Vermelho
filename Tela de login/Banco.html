@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Banco Vermelho</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { background: #f4f4f6; min-height: 100vh; display: flex; justify-content: center; }
+  .app { width: 100%; max-width: 420px; background: #fff; min-height: 100vh; box-shadow: 0 0 30px rgba(0,0,0,.08); }
+
+  .header { background: linear-gradient(135deg, #c8102e, #8b0a1f); color: #fff; padding: 28px 20px 60px; position: relative; }
+  .header-top { display: flex; align-items: center; justify-content: space-between; }
+  .user { display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 44px; height: 44px; border-radius: 50%; background: #fff; color: #c8102e; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .greeting { font-size: 12px; opacity: .85; }
+  .name { font-size: 16px; font-weight: 600; cursor: pointer; border-bottom: 1px dashed transparent; }
+  .name:hover { border-bottom-color: rgba(255,255,255,.5); }
+  .name-input { background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,.6); color: #fff; font-size: 16px; font-weight: 600; outline: none; width: 180px; }
+  .bell { background: rgba(255,255,255,.15); border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; }
+
+  .balance-card { background: #fff; margin: -40px 20px 0; border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,.08); position: relative; }
+  .balance-label { color: #777; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  .eye { background: none; border: none; cursor: pointer; color: #777; font-size: 14px; }
+  .balance { font-size: 32px; font-weight: 700; color: #1a1a1a; margin: 8px 0 16px; }
+  .controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .btn-circle { width: 44px; height: 44px; border-radius: 50%; border: none; font-size: 22px; font-weight: 700; cursor: pointer; background: #c8102e; color: #fff; transition: transform .1s; }
+  .btn-circle:active { transform: scale(.92); }
+  .btn-circle.minus { background: #fff; color: #c8102e; border: 2px solid #c8102e; }
+  .steps { display: flex; gap: 6px; flex: 1; justify-content: center; flex-wrap: wrap; }
+  .step { background: #f4f4f6; border: 1px solid transparent; color: #555; padding: 6px 12px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+  .step.active { background: #fde7ea; color: #c8102e; border-color: #c8102e; font-weight: 600; }
+  .zero { width: 100%; margin-top: 12px; background: transparent; border: 1px dashed #c8102e; color: #c8102e; padding: 8px; border-radius: 10px; cursor: pointer; font-size: 13px; }
+
+  .actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 24px 20px 8px; }
+  .action { background: #fff; border: 1px solid #f0f0f0; border-radius: 14px; padding: 14px 6px; text-align: center; cursor: pointer; transition: background .15s; }
+  .action:hover { background: #fde7ea; }
+  .action-icon { font-size: 22px; color: #c8102e; }
+  .action-label { font-size: 12px; color: #333; margin-top: 6px; }
+
+  .section-title { padding: 20px 20px 8px; font-size: 14px; font-weight: 600; color: #333; }
+
+  .card-preview { margin: 0 20px; background: linear-gradient(135deg, #1a1a1a, #c8102e); color: #fff; border-radius: 16px; padding: 20px; height: 160px; display: flex; flex-direction: column; justify-content: space-between; }
+  .card-brand { font-size: 14px; opacity: .9; }
+  .card-name { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+  .card-number { font-size: 14px; letter-spacing: 3px; opacity: .85; }
+
+  .tx-list { padding: 4px 20px 30px; }
+  .tx { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
+  .tx:last-child { border-bottom: none; }
+  .tx-left { display: flex; align-items: center; gap: 12px; }
+  .tx-icon { width: 38px; height: 38px; border-radius: 50%; background: #fde7ea; color: #c8102e; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .tx-title { font-size: 14px; color: #1a1a1a; font-weight: 500; }
+  .tx-date { font-size: 12px; color: #888; }
+  .tx-value { font-size: 14px; font-weight: 600; }
+  .tx-value.in { color: #1a8c3e; }
+  .tx-value.out { color: #c8102e; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="header-top">
+        <div class="user">
+          <div class="avatar">R</div>
+          <div>
+            <div class="greeting">Olá,</div>
+            <div id="nameDisplay" class="name" onclick="editName()">Rafael Souza</div>
+          </div>
+        </div>
+        <button class="bell" title="Notificações">🔔</button>
+      </div>
+    </div>
+
+    <div class="balance-card">
+      <div class="balance-label">
+        Saldo disponível
+        <button class="eye" onclick="toggleEye()" id="eyeBtn">👁</button>
+      </div>
+      <div class="balance" id="balance">R$ 0,00</div>
+      <div class="controls">
+        <button class="btn-circle minus" onclick="changeBalance(-1)">−</button>
+        <div class="steps" id="steps"></div>
+        <button class="btn-circle" onclick="changeBalance(1)">+</button>
+      </div>
+      <button class="zero" onclick="setZero()">Zerar saldo</button>
+    </div>
+
+    <div class="actions">
+      <div class="action"><div class="action-icon">⚡</div><div class="action-label">Pix</div></div>
+      <div class="action"><div class="action-icon">↗</div><div class="action-label">Transferir</div></div>
+      <div class="action"><div class="action-icon">🧾</div><div class="action-label">Pagar</div></div>
+      <div class="action"><div class="action-icon">📱</div><div class="action-label">Recarga</div></div>
+    </div>
+
+    <div class="section-title">Meu cartão</div>
+    <div class="card-preview">
+      <div>
+        <div class="card-brand">Vermelho Black</div>
+      </div>
+      <div>
+        <div class="card-number">•••• •••• •••• 4827</div>
+        <div class="card-name" id="cardName">RAFAEL SOUZA</div>
+      </div>
+    </div>
+
+    <div class="section-title">Últimas transações</div>
+    <div class="tx-list">
+      <div class="tx"><div class="tx-left"><div class="tx-icon">🛒</div><div><div class="tx-title">Mercado União</div><div class="tx-date">Hoje, 14:32</div></div></div><div class="tx-value out">- R$ 127,80</div></div>
+      <div class="tx"><div class="tx-left"><div class="tx-icon">💼</div><div><div class="tx-title">Salário</div><div class="tx-date">Ontem</div></div></div><div class="tx-value in">+ R$ 4.500,00</div></div>
+      <div class="tx"><div class="tx-left"><div class="tx-icon">🎵</div><div><div class="tx-title">Spotify</div><div class="tx-date">12 jun</div></div></div><div class="tx-value out">- R$ 21,90</div></div>
+      <div class="tx"><div class="tx-left"><div class="tx-icon">⚡</div><div><div class="tx-title">Pix de Ana</div><div class="tx-date">10 jun</div></div></div><div class="tx-value in">+ R$ 150,00</div></div>
+    </div>
+  </div>
+
+<script>
+  let balance = 0;
+  let step = 100;
+  let hidden = false;
+  const STEPS = [10, 50, 100, 500];
+
+  const fmt = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  function render() {
+    document.getElementById('balance').textContent = hidden ? 'R$ ••••' : fmt(balance);
+    const stepsEl = document.getElementById('steps');
+    stepsEl.innerHTML = '';
+    STEPS.forEach(s => {
+      const b = document.createElement('button');
+      b.className = 'step' + (s === step ? ' active' : '');
+      b.textContent = '+' + s;
+      b.onclick = () => { step = s; render(); };
+      stepsEl.appendChild(b);
+    });
+  }
+
+  function changeBalance(dir) {
+    balance = Math.max(0, balance + dir * step);
+    render();
+  }
+
+  function setZero() { balance = 0; render(); }
+
+  function toggleEye() { hidden = !hidden; render(); }
+
+  function editName() {
+    const el = document.getElementById('nameDisplay');
+    const current = el.textContent;
+    const input = document.createElement('input');
+    input.className = 'name-input';
+    input.value = current;
+    el.replaceWith(input);
+    input.focus();
+    input.select();
+    const save = () => {
+      const newName = input.value.trim() || 'Sem nome';
+      const span = document.createElement('div');
+      span.id = 'nameDisplay';
+      span.className = 'name';
+      span.textContent = newName;
+      span.onclick = editName;
+      input.replaceWith(span);
+      document.getElementById('cardName').textContent = newName.toUpperCase();
+    };
+    input.onblur = save;
+    input.onkeydown = (e) => { if (e.key === 'Enter') input.blur(); };
+  }
+
+  render();
+</script>
+</body>
+</html>
