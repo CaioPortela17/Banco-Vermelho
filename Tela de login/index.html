@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tela de login</title>
     <link rel="stylesheet" href="style.css">
+    <script src="codigo.js"></script>
+</body>
+</html>
 </head>
-<body>
-    
+<body id="login-body">
+ <div id="login-container">
+    <h1 id="login-titulo">Bem-vindo à Tela de Login</h1>
+    <form method="post">
+        <label for="username">Usuário:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Senha:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <button id="login-button">Entrar</button>
+    </form>
+ </div>
 </body>
 </html>
