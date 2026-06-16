@@ -5,56 +5,331 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Banco Vermelho</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-  body { background: #f4f4f6; min-height: 100vh; display: flex; justify-content: center; }
-  .app { width: 100%; max-width: 420px; background: #fff; min-height: 100vh; box-shadow: 0 0 30px rgba(0,0,0,.08); }
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
 
-  .header { background: linear-gradient(135deg, #c8102e, #8b0a1f); color: #fff; padding: 28px 20px 60px; position: relative; }
-  .header-top { display: flex; align-items: center; justify-content: space-between; }
-  .user { display: flex; align-items: center; gap: 12px; }
-  .avatar { width: 44px; height: 44px; border-radius: 50%; background: #fff; color: #c8102e; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-  .greeting { font-size: 12px; opacity: .85; }
-  .name { font-size: 16px; font-weight: 600; cursor: pointer; border-bottom: 1px dashed transparent; }
-  .name:hover { border-bottom-color: rgba(255,255,255,.5); }
-  .name-input { background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,.6); color: #fff; font-size: 16px; font-weight: 600; outline: none; width: 180px; }
-  .bell { background: rgba(255,255,255,.15); border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; }
+body{
+  background:#f5f5f5;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  padding:20px 0;
+}
 
-  .balance-card { background: #fff; margin: -40px 20px 0; border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,.08); position: relative; }
-  .balance-label { color: #777; font-size: 13px; display: flex; align-items: center; gap: 8px; }
-  .eye { background: none; border: none; cursor: pointer; color: #777; font-size: 14px; }
-  .balance { font-size: 32px; font-weight: 700; color: #1a1a1a; margin: 8px 0 16px; }
-  .controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .btn-circle { width: 44px; height: 44px; border-radius: 50%; border: none; font-size: 22px; font-weight: 700; cursor: pointer; background: #c8102e; color: #fff; transition: transform .1s; }
-  .btn-circle:active { transform: scale(.92); }
-  .btn-circle.minus { background: #fff; color: #c8102e; border: 2px solid #c8102e; }
-  .steps { display: flex; gap: 6px; flex: 1; justify-content: center; flex-wrap: wrap; }
-  .step { background: #f4f4f6; border: 1px solid transparent; color: #555; padding: 6px 12px; border-radius: 20px; font-size: 13px; cursor: pointer; }
-  .step.active { background: #fde7ea; color: #c8102e; border-color: #c8102e; font-weight: 600; }
-  .zero { width: 100%; margin-top: 12px; background: transparent; border: 1px dashed #c8102e; color: #c8102e; padding: 8px; border-radius: 10px; cursor: pointer; font-size: 13px; }
+.app{
+  width:100%;
+  max-width:420px;
+  background:#ffffff;
+  min-height:100vh;
+  box-shadow:0 10px 35px rgba(0,0,0,.08);
+}
 
-  .actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 24px 20px 8px; }
-  .action { background: #fff; border: 1px solid #f0f0f0; border-radius: 14px; padding: 14px 6px; text-align: center; cursor: pointer; transition: background .15s; }
-  .action:hover { background: #fde7ea; }
-  .action-icon { font-size: 22px; color: #c8102e; }
-  .action-label { font-size: 12px; color: #333; margin-top: 6px; }
+.header{
+  background:#ffffff;
+  color:#111;
+  padding:28px 20px 30px;
+  border-bottom:1px solid #ececec;
+}
 
-  .section-title { padding: 20px 20px 8px; font-size: 14px; font-weight: 600; color: #333; }
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
 
-  .card-preview { margin: 0 20px; background: linear-gradient(135deg, #1a1a1a, #c8102e); color: #fff; border-radius: 16px; padding: 20px; height: 160px; display: flex; flex-direction: column; justify-content: space-between; }
-  .card-brand { font-size: 14px; opacity: .9; }
-  .card-name { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
-  .card-number { font-size: 14px; letter-spacing: 3px; opacity: .85; }
+.user{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
 
-  .tx-list { padding: 4px 20px 30px; }
-  .tx { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
-  .tx:last-child { border-bottom: none; }
-  .tx-left { display: flex; align-items: center; gap: 12px; }
-  .tx-icon { width: 38px; height: 38px; border-radius: 50%; background: #fde7ea; color: #c8102e; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-  .tx-title { font-size: 14px; color: #1a1a1a; font-weight: 500; }
-  .tx-date { font-size: 12px; color: #888; }
-  .tx-value { font-size: 14px; font-weight: 600; }
-  .tx-value.in { color: #1a8c3e; }
-  .tx-value.out { color: #c8102e; }
+.avatar{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:#c8102e;
+  color:#fff;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+}
+
+.greeting{
+  font-size:12px;
+  color:#777;
+}
+
+.name{
+  font-size:17px;
+  font-weight:600;
+  color:#111;
+  cursor:pointer;
+}
+
+.name:hover{
+  color:#c8102e;
+}
+
+.name-input{
+  background:transparent;
+  border:none;
+  border-bottom:2px solid #c8102e;
+  color:#111;
+  font-size:16px;
+  font-weight:600;
+  outline:none;
+  width:180px;
+}
+
+.bell{
+  background:#fff0f2;
+  border:none;
+  color:#c8102e;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:18px;
+}
+
+.balance-card{
+  background:#ffffff;
+  margin:20px;
+  border-radius:20px;
+  padding:24px;
+  border:1px solid #ededed;
+  box-shadow:0 4px 15px rgba(0,0,0,.04);
+}
+
+.balance-label{
+  color:#666;
+  font-size:13px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.eye{
+  background:none;
+  border:none;
+  cursor:pointer;
+  color:#c8102e;
+  font-size:14px;
+}
+
+.balance{
+  font-size:34px;
+  font-weight:700;
+  color:#111;
+  margin:14px 0 24px;
+}
+
+.controls{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.btn-circle{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  border:none;
+  font-size:22px;
+  font-weight:700;
+  cursor:pointer;
+  background:#c8102e;
+  color:#fff;
+  transition:.15s;
+}
+
+.btn-circle:hover{
+  opacity:.9;
+}
+
+.btn-circle:active{
+  transform:scale(.95);
+}
+
+.btn-circle.minus{
+  background:#fff;
+  color:#c8102e;
+  border:2px solid #c8102e;
+}
+
+.steps{
+  display:flex;
+  gap:8px;
+  flex:1;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.step{
+  background:#f8f8f8;
+  border:1px solid #e5e5e5;
+  color:#555;
+  padding:8px 14px;
+  border-radius:999px;
+  font-size:13px;
+  cursor:pointer;
+}
+
+.step.active{
+  background:#c8102e;
+  color:#fff;
+  border-color:#c8102e;
+}
+
+.zero{
+  width:100%;
+  margin-top:18px;
+  background:#fff;
+  border:1px dashed #c8102e;
+  color:#c8102e;
+  padding:12px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:600;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  padding:0 20px 10px;
+}
+
+.action{
+  background:#fff;
+  border:1px solid #ededed;
+  border-radius:16px;
+  padding:18px 8px;
+  text-align:center;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.action:hover{
+  background:#fff5f6;
+  border-color:#c8102e;
+}
+
+.action-icon{
+  font-size:24px;
+  color:#c8102e;
+}
+
+.action-label{
+  font-size:12px;
+  color:#333;
+  margin-top:8px;
+}
+
+.section-title{
+  padding:26px 20px 12px;
+  font-size:15px;
+  font-weight:700;
+  color:#111;
+}
+
+.card-preview{
+  margin:0 20px;
+  background:#ffffff;
+  border:2px solid #c8102e;
+  color:#111;
+  border-radius:20px;
+  padding:24px;
+  height:170px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.card-brand{
+  color:#c8102e;
+  font-size:14px;
+  font-weight:700;
+}
+
+.card-name{
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:1px;
+}
+
+.card-number{
+  font-size:14px;
+  letter-spacing:3px;
+  color:#666;
+}
+
+.tx-list{
+  padding:8px 20px 40px;
+}
+
+.tx{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 0;
+  border-bottom:1px solid #f0f0f0;
+}
+
+.tx:last-child{
+  border-bottom:none;
+}
+
+.tx-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.tx-icon{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:#fff0f2;
+  color:#c8102e;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+}
+
+.tx-title{
+  font-size:14px;
+  color:#111;
+  font-weight:600;
+}
+
+.tx-date{
+  font-size:12px;
+  color:#888;
+  margin-top:2px;
+}
+
+.tx-value{
+  font-size:14px;
+  font-weight:700;
+}
+
+.tx-value.in{
+  color:#198754;
+}
+
+.tx-value.out{
+  color:#c8102e;
+}
 </style>
 </head>
 <body>
@@ -65,8 +340,7 @@
           <div class="avatar">R</div>
           <div>
             <div class="greeting">Olá,</div>
-            <div id="nameDisplay" class="name" onclick="editName()">Rafael Souza</div>
-          </div>
+           <div id="nameDisplay" class="name" onclick="editName()">Carregando...</div>
         </div>
         <button class="bell" title="Notificações">🔔</button>
       </div>
@@ -120,6 +394,18 @@
   const STEPS = [10, 50, 100, 500];
 
   const fmt = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  const nomeSalvo = localStorage.getItem("nomeUsuario");
+const saldoSalvo = localStorage.getItem("saldoUsuario");
+
+if (nomeSalvo) {
+    document.getElementById("nameDisplay").textContent = nomeSalvo;
+    document.getElementById("cardName").textContent = nomeSalvo.toUpperCase();
+}
+
+if (saldoSalvo) {
+    balance = Number(saldoSalvo);
+}
 
   function render() {
     document.getElementById('balance').textContent = hidden ? 'R$ ••••' : fmt(balance);

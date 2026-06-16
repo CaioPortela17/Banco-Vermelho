@@ -1,4 +1,3 @@
-// Usuários cadastrados
 const usuarios = [
     {
         email: "caio123@gmail.com",
@@ -10,13 +9,13 @@ const usuarios = [
     }
 ];
 
-// Elementos da página
-const email = document.getElementById("email");
-const senha = document.getElementById("senha");
-const btnEntrar = document.getElementById("btnEntrar");
+const email = document.getElementById("username");
+const senha = document.getElementById("password");
+const btnEntrar = document.getElementById("login-button");
 const mensagem = document.getElementById("mensagem");
+const nome = document.getElementById("nome");
+const saldo = document.getElementById("saldo");
 
-// Evento do botão
 btnEntrar.addEventListener("click", entrar);
 
 function entrar() {
@@ -25,7 +24,8 @@ function entrar() {
     const senhaDigitada = senha.value.trim();
 
     if (emailDigitado === "" || senhaDigitada === "") {
-        mensagem.textContent = "Preencha todos os campos.";
+        mensagem.textContent = "Preencha todos os campos!";
+        mensagem.style.color = "orange";
         return;
     }
 
@@ -35,11 +35,27 @@ function entrar() {
     );
 
     if (usuarioEncontrado) {
-        mensagem.textContent = "Login realizado com sucesso!";
 
-        // Redirecionar para outra página
-        // window.location.href = "home.html";
+    localStorage.setItem("nomeUsuario", nome.value);
+    localStorage.setItem("saldoUsuario", saldo.value);
+
+    mensagem.textContent = "Login realizado com sucesso!";
+    mensagem.style.color = "green";
+
+    setTimeout(() => {
+        window.location.href = "banco.html";
+    }, 1000);
+
+    if (usuarioEncontrado) {
+        mensagem.textContent = "Login realizado com sucesso!";
+        mensagem.style.color = "green";
+
+        setTimeout(() => {
+            window.location.href = "Banco.html";
+        }, 1000);
+
     } else {
-        mensagem.textContent = "E-mail ou senha incorretos.";
+        mensagem.textContent = "E-mail ou senha incorretos!";
+        mensagem.style.color = "red";
     }
-}
+}}
