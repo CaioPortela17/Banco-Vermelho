@@ -65,8 +65,7 @@
           <div class="avatar">R</div>
           <div>
             <div class="greeting">Olá,</div>
-            <div id="nameDisplay" class="name" onclick="editName()">Rafael Souza</div>
-          </div>
+           <div id="nameDisplay" class="name" onclick="editName()">Carregando...</div>
         </div>
         <button class="bell" title="Notificações">🔔</button>
       </div>
@@ -120,6 +119,18 @@
   const STEPS = [10, 50, 100, 500];
 
   const fmt = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  const nomeSalvo = localStorage.getItem("nomeUsuario");
+const saldoSalvo = localStorage.getItem("saldoUsuario");
+
+if (nomeSalvo) {
+    document.getElementById("nameDisplay").textContent = nomeSalvo;
+    document.getElementById("cardName").textContent = nomeSalvo.toUpperCase();
+}
+
+if (saldoSalvo) {
+    balance = Number(saldoSalvo);
+}
 
   function render() {
     document.getElementById('balance').textContent = hidden ? 'R$ ••••' : fmt(balance);
