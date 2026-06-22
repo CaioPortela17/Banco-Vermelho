@@ -3,38 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tela de Login</title>
+    <title>Banco Vermelho — Acesso</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body id="login-body">
 
     <div id="login-container">
-        <h1 id="login-titulo">Bem-vindo à Tela de Login</h1>
 
-        <form>
-            <label for="nome">Nome:</label>
-<input type="text" id="nome" required>
-<br><br>
+        <div id="login-logo">
+            <div id="login-logo-icon">🏦</div>
+            <div id="login-brand">Banco<span>Vermelho</span></div>
+        </div>
 
-<label for="saldo">Saldo Inicial:</label>
-<input type="number" id="saldo" required>
-<br><br>
+        <h1 id="login-titulo">Bem-vindo de volta</h1>
+        <p id="login-subtitulo">Acesse sua conta com segurança</p>
 
-<label for="username">Usuário:</label>
-<input type="text" id="username" required>
-<br><br>
+        <form id="login-form" novalidate>
+            <div class="field-group">
+                <label for="username">E-mail</label>
+                <input type="email" id="username" placeholder="seu@email.com" required>
+            </div>
 
-<label for="password">Senha:</label>
-<input type="password" id="password" required>
-<br><br>
-            <button type="button" id="login-button">Entrar</button>
+            <div class="field-group">
+                <label for="password">Senha</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" placeholder="••••••••" required>
+                    <button type="button" id="toggle-senha" class="toggle-btn" title="Mostrar senha">👁</button>
+                </div>
+            </div>
 
+            <button type="button" id="login-button" class="auth-btn">Entrar na conta</button>
             <p id="mensagem"></p>
         </form>
+
+        <p class="auth-link">Não tem uma conta? <a href="cadastro.html">Cadastre-se</a></p>
+        <p id="login-hint">Teste: <strong>caio123@gmail.com</strong> / <strong>senha123456</strong></p>
     </div>
 
     <script src="codigo.js"></script>
-
 </body>
 </html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco Vermelho — Cadastro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="login-body">
+
+    <div id="login-container">
+
+        <div id="login-logo">
+            <div id="login-logo-icon">🏦</div>
+            <div id="login-brand">Banco<span>Vermelho</span></div>
+        </div>
+
+        <h1 id="login-titulo">Crie sua conta</h1>
+        <p id="login-subtitulo">Preencha seus dados para começar</p>
+
+        <form id="cadastro-form" novalidate>
+            <div class="field-group">
+                <label for="nome">Nome completo</label>
+                <input type="text" id="nome" placeholder="Seu nome completo" required>
+            </div>
+
+            <div class="field-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" placeholder="seu@email.com" required>
+            </div>
+
+            <div class="field-group">
+                <label for="saldo">Saldo inicial (R$)</label>
+                <input type="number" id="saldo" placeholder="0,00" min="0" step="0.01" required>
+            </div>
+
+            <div class="field-group">
+                <label for="senha">Senha</label>
+                <div class="input-wrapper">
+                    <input type="password" id="senha" placeholder="Mínimo 6 caracteres" required>
+                    <button type="button" class="toggle-btn" onclick="toggleVis('senha', this)">👁</button>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label for="confirmar">Confirmar senha</label>
+                <div class="input-wrapper">
+                    <input type="password" id="confirmar" placeholder="Repita a senha" required>
+                    <button type="button" class="toggle-btn" onclick="toggleVis('confirmar', this)">👁</button>
+                </div>
+            </div>
+
+            <button type="button" class="auth-btn" onclick="cadastrar()">Criar conta</button>
+            <p id="mensagem"></p>
+        </form>
+
+        <p class="auth-link">Já tem uma conta? <a href="index.html">Entrar</a></p>
+    </div>
+
+    <script>
+        const emailsFixos = ["caio123@gmail.com", "hugo432@gmail.com"];
+
+        document.getElementById("cadastro-form").addEventListener("keydown", (e) => {
+            if (e.key === "Enter") cadastrar();
+        });
+
+        function toggleVis(id, btn) {
+            const input = document.getElementById(id);
+            const visivel = input.type === "text";
+            input.type = visivel ? "password" : "text";
+            btn.textContent = visivel ? "👁" : "🙈";
+        }
+
+        function cadastrar() {
+            const nome     = document.getElementById("nome").value.trim();
+            const email    = document.getElementById("email").value.trim();
+            const saldo    = document.getElementById("saldo").value.trim();
+            const senha    = document.getElementById("senha").value.trim();
+            const confirmar = document.getElementById("confirmar").value.trim();
+
+            if (!nome || !email || !saldo || !senha || !confirmar) {
+                mostrar("Preencha todos os campos!", "orange");
+                return;
+            }
+
+            if (senha.length < 6) {
+                mostrar("A senha deve ter pelo menos 6 caracteres.", "orange");
+                return;
+            }
+
+            if (senha !== confirmar) {
+                mostrar("As senhas não coincidem!", "orange");
+                return;
+            }
+
+            if (Number(saldo) < 0) {
+                mostrar("O saldo não pode ser negativo.", "orange");
+                return;
+            }
+
+            const registrados = JSON.parse(localStorage.getItem("usuarios_cadastrados") || "[]");
+            const emailEmUso  = registrados.some(u => u.email === email) || emailsFixos.includes(email);
+
+            if (emailEmUso) {
+                mostrar("Este e-mail já está cadastrado!", "#c8102e");
+                return;
+            }
+
+            registrados.push({ nome, email, senha, saldo: Number(saldo) });
+            localStorage.setItem("usuarios_cadastrados", JSON.stringify(registrados));
+
+            // Login automático após cadastro
+            localStorage.setItem("nomeUsuario",  nome);
+            localStorage.setItem("emailUsuario", email);
+            localStorage.setItem("saldoUsuario", saldo);
+
+            mostrar("Conta criada com sucesso!", "green");
+            setTimeout(() => { window.location.href = "Banco.html"; }, 1000);
+        }
+
+        function mostrar(texto, cor) {
+            const el = document.getElementById("mensagem");
+            el.textContent = texto;
+            el.style.color = cor;
+        }
+    </script>
+</body>
+</html>
