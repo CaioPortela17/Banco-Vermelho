@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Banco Vermelho</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+
+body{background:#f5f5f5;min-height:100vh;display:flex;justify-content:center;padding:20px 0;}
+
+.app{width:100%;max-width:420px;background:#fff;min-height:100vh;box-shadow:0 10px 35px rgba(0,0,0,.08);}
+
+/* ── Header ── */
+.header{background:#fff;padding:28px 20px 20px;border-bottom:1px solid #ececec;}
+.header-top{display:flex;align-items:center;justify-content:space-between;}
+.user{display:flex;align-items:center;gap:14px;}
+.avatar{width:48px;height:48px;border-radius:50%;background:#c8102e;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.greeting{font-size:12px;color:#777;}
+.name{font-size:17px;font-weight:600;color:#111;cursor:pointer;}
+.name:hover{color:#c8102e;}
+.name-input{background:transparent;border:none;border-bottom:2px solid #c8102e;color:#111;font-size:16px;font-weight:600;outline:none;width:180px;}
+.header-actions{display:flex;gap:8px;}
+.icon-btn{background:#fff0f2;border:none;color:#c8102e;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:18px;transition:.15s;display:flex;align-items:center;justify-content:center;}
+.icon-btn:hover{background:#ffd6dc;}
+
+/* ── Balance card ── */
+.balance-card{background:#fff;margin:20px;border-radius:20px;padding:24px;border:1px solid #ededed;box-shadow:0 4px 15px rgba(0,0,0,.04);}
+.balance-label{color:#666;font-size:13px;display:flex;align-items:center;gap:8px;}
+.eye{background:none;border:none;cursor:pointer;color:#c8102e;font-size:14px;}
+.balance{font-size:34px;font-weight:700;color:#111;margin:14px 0 24px;}
+.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.btn-circle{width:48px;height:48px;border-radius:50%;border:none;font-size:22px;font-weight:700;cursor:pointer;background:#c8102e;color:#fff;transition:.15s;flex-shrink:0;}
+.btn-circle:hover{opacity:.9;}
+.btn-circle:active{transform:scale(.95);}
+.btn-circle.minus{background:#fff;color:#c8102e;border:2px solid #c8102e;}
+.steps{display:flex;gap:8px;flex:1;justify-content:center;flex-wrap:wrap;}
+.step{background:#f8f8f8;border:1px solid #e5e5e5;color:#555;padding:8px 14px;border-radius:999px;font-size:13px;cursor:pointer;transition:.15s;}
+.step:hover{border-color:#c8102e;color:#c8102e;}
+.step.active{background:#c8102e;color:#fff;border-color:#c8102e;}
+.zero{width:100%;margin-top:18px;background:#fff;border:1px dashed #c8102e;color:#c8102e;padding:12px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
+.zero:hover{background:#fff0f2;}
+
+/* ── Actions ── */
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 20px 10px;}
+.action{background:#fff;border:1px solid #ededed;border-radius:16px;padding:18px 8px;text-align:center;cursor:pointer;transition:.15s;}
+.action:hover{background:#fff5f6;border-color:#c8102e;}
+.action-icon{font-size:24px;color:#c8102e;}
+.action-label{font-size:12px;color:#333;margin-top:8px;}
+
+/* ── Section title ── */
+.section-title{padding:26px 20px 12px;font-size:15px;font-weight:700;color:#111;}
+
+/* ── Card preview ── */
+.card-preview{margin:0 20px;background:#fff;border:2px solid #c8102e;border-radius:20px;padding:24px;height:170px;display:flex;flex-direction:column;justify-content:space-between;}
+.card-brand{color:#c8102e;font-size:14px;font-weight:700;}
+.card-name{font-size:18px;font-weight:700;letter-spacing:1px;}
+.card-number{font-size:14px;letter-spacing:3px;color:#666;}
+
+/* ── Transactions ── */
+.tx-list{padding:8px 20px 40px;}
+.tx{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid #f0f0f0;}
+.tx:last-child{border-bottom:none;}
+.tx-left{display:flex;align-items:center;gap:12px;}
+.tx-icon{width:42px;height:42px;border-radius:50%;background:#fff0f2;color:#c8102e;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.tx-title{font-size:14px;color:#111;font-weight:600;}
+.tx-date{font-size:12px;color:#888;margin-top:2px;}
+.tx-value{font-size:14px;font-weight:700;white-space:nowrap;}
+.tx-value.in{color:#198754;}
+.tx-value.out{color:#c8102e;}
+.tx-empty{text-align:center;color:#aaa;font-size:14px;padding:32px 0;}
+
+/* ── Modal overlay (bottom sheet) ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;width:100%;max-width:420px;border-radius:24px 24px 0 0;padding:28px 24px 44px;animation:slideUp .25s ease;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+.modal-title{font-size:18px;font-weight:700;color:#111;display:flex;align-items:center;gap:8px;}
+.modal-close{background:#f5f5f5;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;color:#555;transition:.15s;}
+.modal-close:hover{background:#ececec;}
+.modal-field{margin-bottom:16px;}
+.modal-field label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px;}
+.modal-field input,.modal-field select{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:14px;color:#111;background:#fafafa;outline:none;transition:border-color .2s,box-shadow .2s;}
+.modal-field input:focus,.modal-field select:focus{border-color:#c8102e;box-shadow:0 0 0 3px rgba(200,16,46,.1);background:#fff;}
+.modal-btn{width:100%;background:#c8102e;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s,transform .1s;}
+.modal-btn:hover{background:#a50d25;}
+.modal-btn:active{transform:scale(.98);}
+
+/* Recarga value grid */
+.recarga-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.recarga-opt{padding:12px 8px;border:1.5px solid #e0e0e0;border-radius:10px;background:#fafafa;font-size:14px;font-weight:600;cursor:pointer;text-align:center;color:#555;transition:.15s;}
+.recarga-opt:hover{border-color:#c8102e;color:#c8102e;}
+.recarga-opt.selected{border-color:#c8102e;background:#fff0f2;color:#c8102e;}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;padding:12px 24px;border-radius:999px;font-size:13px;font-weight:600;opacity:0;transition:all .3s ease;pointer-events:none;white-space:nowrap;z-index:200;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <div class="user">
+        <div class="avatar" id="avatarEl">?</div>
+        <div>
+          <div class="greeting">Olá,</div>
+          <div id="nameDisplay" class="name" onclick="editName()" title="Clique para editar">Carregando...</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" title="Notificações">🔔</button>
+        <button class="icon-btn" title="Sair" onclick="logout()">🚪</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Balance -->
+  <div class="balance-card">
+    <div class="balance-label">
+      Saldo disponível
+      <button class="eye" onclick="toggleEye()" id="eyeBtn">👁</button>
+    </div>
+    <div class="balance" id="balance">R$ 0,00</div>
+    <div class="controls">
+      <button class="btn-circle minus" onclick="changeBalance(-1)">−</button>
+      <div class="steps" id="steps"></div>
+      <button class="btn-circle" onclick="changeBalance(1)">+</button>
+    </div>
+    <button class="zero" onclick="confirmarZerar()">Zerar saldo</button>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="actions">
+    <div class="action" onclick="openModal('modalPix')">
+      <div class="action-icon">⚡</div>
+      <div class="action-label">Pix</div>
+    </div>
+    <div class="action" onclick="openModal('modalTransferir')">
+      <div class="action-icon">↗</div>
+      <div class="action-label">Transferir</div>
+    </div>
+    <div class="action" onclick="openModal('modalPagar')">
+      <div class="action-icon">🧾</div>
+      <div class="action-label">Pagar</div>
+    </div>
+    <div class="action" onclick="openModal('modalRecarga')">
+      <div class="action-icon">📱</div>
+      <div class="action-label">Recarga</div>
+    </div>
+  </div>
+
+  <!-- Card -->
+  <div class="section-title">Meu cartão</div>
+  <div class="card-preview">
+    <div><div class="card-brand">Vermelho Black</div></div>
+    <div>
+      <div class="card-number">•••• •••• •••• 4827</div>
+      <div class="card-name" id="cardName">—</div>
+    </div>
+  </div>
+
+  <!-- Transactions -->
+  <div class="section-title">Últimas transações</div>
+  <div class="tx-list" id="txList"></div>
+
+</div>
+
+<!-- ── Modal Pix ── -->
+<div class="modal-overlay" id="modalPix">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">⚡ Pix</div>
+      <button class="modal-close" onclick="closeModal('modalPix')">✕</button>
+    </div>
+    <div class="modal-field">
+      <label>Chave Pix</label>
+      <input type="text" id="pixChave" placeholder="CPF, telefone, e-mail ou chave aleatória">
+    </div>
+    <div class="modal-field">
+      <label>Valor (R$)</label>
+      <input type="number" id="pixValor" placeholder="0,00" min="0.01" step="0.01">
+    </div>
+    <button class="modal-btn" onclick="confirmarPix()">Enviar Pix</button>
+  </div>
+</div>
+
+<!-- ── Modal Transferir ── -->
+<div class="modal-overlay" id="modalTransferir">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">↗ Transferência</div>
+      <button class="modal-close" onclick="closeModal('modalTransferir')">✕</button>
+    </div>
+    <div class="modal-field">
+      <label>Destinatário</label>
+      <input type="text" id="transNome" placeholder="Nome ou número da conta">
+    </div>
+    <div class="modal-field">
+      <label>Valor (R$)</label>
+      <input type="number" id="transValor" placeholder="0,00" min="0.01" step="0.01">
+    </div>
+    <button class="modal-btn" onclick="confirmarTransferencia()">Transferir</button>
+  </div>
+</div>
+
+<!-- ── Modal Pagar ── -->
+<div class="modal-overlay" id="modalPagar">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🧾 Pagar conta</div>
+      <button class="modal-close" onclick="closeModal('modalPagar')">✕</button>
+    </div>
+    <div class="modal-field">
+      <label>Descrição</label>
+      <input type="text" id="pagarDesc" placeholder="Ex: Conta de luz, Aluguel...">
+    </div>
+    <div class="modal-field">
+      <label>Valor (R$)</label>
+      <input type="number" id="pagarValor" placeholder="0,00" min="0.01" step="0.01">
+    </div>
+    <button class="modal-btn" onclick="confirmarPagamento()">Pagar</button>
+  </div>
+</div>
+
+<!-- ── Modal Recarga ── -->
+<div class="modal-overlay" id="modalRecarga">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📱 Recarga</div>
+      <button class="modal-close" onclick="closeModal('modalRecarga')">✕</button>
+    </div>
+    <div class="modal-field">
+      <label>Número do celular</label>
+      <input type="tel" id="recargaTel" placeholder="(11) 99999-9999">
+    </div>
+    <div class="modal-field">
+      <label>Escolha o valor</label>
+    </div>
+    <div class="recarga-grid">
+      <div class="recarga-opt" onclick="selecionarRecarga(this, 10)">R$ 10</div>
+      <div class="recarga-opt" onclick="selecionarRecarga(this, 20)">R$ 20</div>
+      <div class="recarga-opt" onclick="selecionarRecarga(this, 30)">R$ 30</div>
+      <div class="recarga-opt" onclick="selecionarRecarga(this, 50)">R$ 50</div>
+      <div class="recarga-opt" onclick="selecionarRecarga(this, 100)">R$ 100</div>
+      <div class="recarga-opt" onclick="selecionarRecarga(this, 150)">R$ 150</div>
+    </div>
+    <button class="modal-btn" onclick="confirmarRecarga()">Recarregar</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── State ──
+  let balance = 0;
+  let step    = 100;
+  let hidden  = false;
+  let recargaValor = 0;
+  const STEPS = [10, 50, 100, 500];
+
+  const email  = localStorage.getItem("emailUsuario") || "";
+  const txKey  = `transacoes_${email}`;
+  const fmt    = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  const defaultTx = [
+    { icone:"🛒", titulo:"Mercado União",  data:"Hoje, 14:32", valor:-127.80 },
+    { icone:"💼", titulo:"Salário",        data:"Ontem",       valor:4500.00 },
+    { icone:"🎵", titulo:"Spotify",        data:"12 jun",      valor:-21.90  },
+    { icone:"⚡", titulo:"Pix de Ana",     data:"10 jun",      valor:150.00  },
+  ];
+
+  // ── Init ──
+  const nomeSalvo   = localStorage.getItem("nomeUsuario");
+  const saldoSalvo  = localStorage.getItem("saldoUsuario");
+
+  if (!nomeSalvo) { window.location.href = "index.html"; }
+
+  if (nomeSalvo) {
+    document.getElementById("nameDisplay").textContent = nomeSalvo;
+    document.getElementById("cardName").textContent    = nomeSalvo.toUpperCase();
+    document.getElementById("avatarEl").textContent    = nomeSalvo.charAt(0).toUpperCase();
+  }
+
+  if (saldoSalvo) { balance = parseFloat(saldoSalvo) || 0; }
+
+  // ── Balance ──
+  function saveBalance() {
+    localStorage.setItem("saldoUsuario", String(balance));
+    if (email) localStorage.setItem(`saldo_${email}`, String(balance));
+  }
+
+  function render() {
+    document.getElementById('balance').textContent = hidden ? 'R$ ••••••' : fmt(balance);
+    const stepsEl = document.getElementById('steps');
+    stepsEl.innerHTML = '';
+    STEPS.forEach(s => {
+      const b = document.createElement('button');
+      b.className = 'step' + (s === step ? ' active' : '');
+      b.textContent = '+' + s;
+      b.onclick = () => { step = s; render(); };
+      stepsEl.appendChild(b);
+    });
+  }
+
+  function changeBalance(dir) {
+    balance = Math.max(0, balance + dir * step);
+    saveBalance();
+    render();
+  }
+
+  function confirmarZerar() {
+    if (balance === 0) return;
+    if (confirm("Tem certeza que deseja zerar o saldo?")) {
+      balance = 0;
+      saveBalance();
+      render();
+      showToast("Saldo zerado");
+    }
+  }
+
+  function toggleEye() {
+    hidden = !hidden;
+    document.getElementById('eyeBtn').textContent = hidden ? '🙈' : '👁';
+    render();
+  }
+
+  // ── Name editing ──
+  function editName() {
+    const el = document.getElementById('nameDisplay');
+    const current = el.textContent;
+    const input = document.createElement('input');
+    input.className = 'name-input';
+    input.value = current;
+    el.replaceWith(input);
+    input.focus();
+    input.select();
+    const save = () => {
+      const newName = input.value.trim() || current;
+      const span = document.createElement('div');
+      span.id = 'nameDisplay';
+      span.className = 'name';
+      span.textContent = newName;
+      span.onclick = editName;
+      span.title = 'Clique para editar';
+      input.replaceWith(span);
+      document.getElementById('cardName').textContent   = newName.toUpperCase();
+      document.getElementById('avatarEl').textContent   = newName.charAt(0).toUpperCase();
+      localStorage.setItem("nomeUsuario", newName);
+      showToast("Nome atualizado");
+    };
+    input.onblur = save;
+    input.onkeydown = e => {
+      if (e.key === "Enter")  input.blur();
+      if (e.key === "Escape") { input.value = current; input.blur(); }
+    };
+  }
+
+  // ── Logout ──
+  function logout() {
+    if (confirm("Deseja sair da sua conta?")) {
+      ["nomeUsuario","emailUsuario","saldoUsuario"].forEach(k => localStorage.removeItem(k));
+      window.location.href = "index.html";
+    }
+  }
+
+  // ── Transactions ──
+  function getTx() {
+    const saved = localStorage.getItem(txKey);
+    return saved ? JSON.parse(saved) : [...defaultTx];
+  }
+
+  function addTx(tx) {
+    const saved = localStorage.getItem(txKey);
+    const list  = saved ? JSON.parse(saved) : [];
+    list.unshift(tx);
+    localStorage.setItem(txKey, JSON.stringify(list));
+    renderTx();
+  }
+
+  function agora() {
+    const d = new Date();
+    return `Hoje, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+
+  function renderTx() {
+    const txs = getTx();
+    const list = document.getElementById("txList");
+    if (!txs.length) {
+      list.innerHTML = '<p class="tx-empty">Nenhuma transação ainda.</p>';
+      return;
+    }
+    list.innerHTML = txs.map(tx => {
+      const isIn  = tx.valor > 0;
+      const fmtV  = Math.abs(tx.valor).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+      return `
+        <div class="tx">
+          <div class="tx-left">
+            <div class="tx-icon">${tx.icone}</div>
+            <div>
+              <div class="tx-title">${tx.titulo}</div>
+              <div class="tx-date">${tx.data}</div>
+            </div>
+          </div>
+          <div class="tx-value ${isIn ? 'in' : 'out'}">${isIn ? '+' : '−'} ${fmtV}</div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Modals ──
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+    document.querySelectorAll(`#${id} input`).forEach(i => i.value = '');
+    document.querySelectorAll(`#${id} .recarga-opt`).forEach(o => o.classList.remove('selected'));
+    recargaValor = 0;
+  }
+
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) closeModal(o.id); });
+  });
+
+  // ── Actions ──
+  function validarValor(val) {
+    if (!val || isNaN(val) || val <= 0) { showToast("Informe um valor válido"); return false; }
+    if (val > balance)                  { showToast("Saldo insuficiente");       return false; }
+    return true;
+  }
+
+  function confirmarPix() {
+    const chave = document.getElementById('pixChave').value.trim();
+    const valor = parseFloat(document.getElementById('pixValor').value);
+    if (!chave)               { showToast("Informe a chave Pix"); return; }
+    if (!validarValor(valor)) return;
+    balance -= valor; saveBalance(); render();
+    addTx({ icone:"⚡", titulo:`Pix para ${chave}`, data:agora(), valor:-valor });
+    closeModal('modalPix');
+    showToast(`Pix de ${fmt(valor)} enviado!`);
+  }
+
+  function confirmarTransferencia() {
+    const nome  = document.getElementById('transNome').value.trim();
+    const valor = parseFloat(document.getElementById('transValor').value);
+    if (!nome)                { showToast("Informe o destinatário"); return; }
+    if (!validarValor(valor)) return;
+    balance -= valor; saveBalance(); render();
+    addTx({ icone:"↗", titulo:`Transferência para ${nome}`, data:agora(), valor:-valor });
+    closeModal('modalTransferir');
+    showToast(`Transferência de ${fmt(valor)} realizada!`);
+  }
+
+  function confirmarPagamento() {
+    const desc  = document.getElementById('pagarDesc').value.trim();
+    const valor = parseFloat(document.getElementById('pagarValor').value);
+    if (!desc)                { showToast("Informe a descrição"); return; }
+    if (!validarValor(valor)) return;
+    balance -= valor; saveBalance(); render();
+    addTx({ icone:"🧾", titulo:desc, data:agora(), valor:-valor });
+    closeModal('modalPagar');
+    showToast(`Pagamento de ${fmt(valor)} realizado!`);
+  }
+
+  function selecionarRecarga(el, valor) {
+    document.querySelectorAll('.recarga-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    recargaValor = valor;
+  }
+
+  function confirmarRecarga() {
+    const tel = document.getElementById('recargaTel').value.trim();
+    if (!tel)          { showToast("Informe o número do celular"); return; }
+    if (!recargaValor) { showToast("Selecione o valor da recarga"); return; }
+    if (recargaValor > balance) { showToast("Saldo insuficiente"); return; }
+    balance -= recargaValor; saveBalance(); render();
+    addTx({ icone:"📱", titulo:`Recarga ${tel}`, data:agora(), valor:-recargaValor });
+    closeModal('modalRecarga');
+    showToast(`Recarga de ${fmt(recargaValor)} realizada!`);
+  }
+
+  // ── Toast ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ── Start ──
+  render();
+  renderTx();
+</script>
+</body>
+</html>

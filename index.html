@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco Vermelho — Acesso</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="login-body">
+
+    <div id="login-container">
+
+        <div id="login-logo">
+            <div id="login-logo-icon">🏦</div>
+            <div id="login-brand">Banco<span>Vermelho</span></div>
+        </div>
+
+        <h1 id="login-titulo">Bem-vindo de volta</h1>
+        <p id="login-subtitulo">Acesse sua conta com segurança</p>
+
+        <form id="login-form" novalidate>
+            <div class="field-group">
+                <label for="username">E-mail</label>
+                <input type="email" id="username" placeholder="seu@email.com" required>
+            </div>
+
+            <div class="field-group">
+                <label for="password">Senha</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" placeholder="••••••••" required>
+                    <button type="button" id="toggle-senha" class="toggle-btn" title="Mostrar senha">👁</button>
+                </div>
+            </div>
+
+            <button type="button" id="login-button" class="auth-btn">Entrar na conta</button>
+            <p id="mensagem"></p>
+        </form>
+
+        <p class="auth-link">Não tem uma conta? <a href="cadastro.html">Cadastre-se</a></p>
+        <p id="login-hint">Teste: <strong>caio123@gmail.com</strong> / <strong>senha123456</strong></p>
+    </div>
+
+    <script src="codigo.js"></script>
+</body>
+</html>
