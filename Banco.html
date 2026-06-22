@@ -112,7 +112,7 @@ body{background:#f5f5f5;min-height:100vh;display:flex;justify-content:center;pad
         </div>
       </div>
       <div class="header-actions">
-        <button class="icon-btn" title="Notificações">🔔</button>
+        <button class="icon-btn" title="Notificações" onclick="toggleBell()" id="bellBtn">🔔</button>
         <button class="icon-btn" title="Sair" onclick="logout()">🚪</button>
       </div>
     </div>
@@ -260,6 +260,7 @@ body{background:#f5f5f5;min-height:100vh;display:flex;justify-content:center;pad
   let balance = 0;
   let step    = 100;
   let hidden  = false;
+  let trocar = false
   let recargaValor = 0;
   const STEPS = [10, 50, 100, 500];
 
@@ -326,6 +327,12 @@ body{background:#f5f5f5;min-height:100vh;display:flex;justify-content:center;pad
   function toggleEye() {
     hidden = !hidden;
     document.getElementById('eyeBtn').textContent = hidden ? '🙈' : '👁';
+    render();
+  }
+
+    function toggleBell() {
+    trocar = !trocar;
+    document.getElementById('bellBtn').textContent = trocar ? '🔕' : '🔔';
     render();
   }
 
