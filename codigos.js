@@ -41,7 +41,7 @@ function entrar() {
         localStorage.setItem("emailUsuario", email);
         localStorage.setItem("saldoUsuario", saldoSalvo !== null ? saldoSalvo : String(usuario.saldo));
         mostrarMensagem("Login realizado com sucesso!", "green");
-        setTimeout(() => { window.location.href = "Banco.html"; }, 1000);
+        setTimeout(() => { window.location.href = "banco.html"; }, 1000);
     } else {
         mostrarMensagem("E-mail ou senha incorretos!", "#c8102e");
     }
