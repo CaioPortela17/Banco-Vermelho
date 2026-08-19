@@ -54,7 +54,7 @@
             <p id="mensagem"></p>
         </form>
 
-        <p class="auth-link">Já tem uma conta? <a href="login.html">Entrar</a></p>
+        <p class="auth-link">Já tem uma conta? <a href="index.html">Entrar</a></p>
     </div>
 
     <script>
@@ -80,6 +80,12 @@
 
             if (!nome || !email || !saldo || !senha || !confirmar) {
                 mostrar("Preencha todos os campos!", "orange");
+                return;
+            }
+
+            // Validação para exigir o '@' no e-mail
+            if (!email.includes("@")) {
+                mostrar("O e-mail deve conter '@'!", "orange");
                 return;
             }
 
@@ -115,7 +121,7 @@
             localStorage.setItem("saldoUsuario", saldo);
 
             mostrar("Conta criada com sucesso!", "green");
-            setTimeout(() => { window.location.href = "Banco.html"; }, 1000);
+            setTimeout(() => { window.location.href = "banco.html"; }, 1000);
         }
 
         function mostrar(texto, cor) {

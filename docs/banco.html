@@ -185,7 +185,7 @@
   const nomeSalvo   = localStorage.getItem("nomeUsuario");
   const saldoSalvo  = localStorage.getItem("saldoUsuario");
 
-  if (!nomeSalvo) { window.location.href = "login.html"; }
+  if (!nomeSalvo) { window.location.href = "index.html"; }
 
   if (nomeSalvo) {
     document.getElementById("nameDisplay").textContent = nomeSalvo;
@@ -303,7 +303,7 @@
   function logout() {
     if (confirm("Deseja sair da sua conta?")) {
       ["nomeUsuario","emailUsuario","saldoUsuario"].forEach(k => localStorage.removeItem(k));
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }
   }
 
