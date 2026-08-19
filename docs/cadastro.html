@@ -83,6 +83,12 @@
                 return;
             }
 
+            // Validação para exigir o '@' no e-mail
+            if (!email.includes("@")) {
+                mostrar("O e-mail deve conter '@'!", "orange");
+                return;
+            }
+
             if (senha.length < 6) {
                 mostrar("A senha deve ter pelo menos 6 caracteres.", "orange");
                 return;
